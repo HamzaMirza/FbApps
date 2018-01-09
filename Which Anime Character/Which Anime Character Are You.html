@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Anime</title>
+	<script src="js/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<style>
+		#container
+		 {
+			
+			height:79.55%;
+			position:absolute
+			;
+			top:10%;
+	
+		 }
+		
+		 #login
+		 {
+			
+			position:absolute;
+			top:50%;
+			left:30%;
+		 }
+		  #shareBtn
+		 {
+			position:relative;
+			left:30%;
+		 }
+	 	#resultPhoto
+		{
+			width:100%; height:100%;
+		}
+	</style>
+</head>
+
+<body>
+<div id="fb-root"></div>
+
+ <script>
+		var Username,gender,DPsrc;
+		  window.fbAsyncInit = function() 
+		  {
+			FB.init({
+				appId      : '502487440092647',
+				cookie     : true,  // enable cookies to allow the server to access 
+									// the session
+				xfbml      : true,  // parse social plugins on this page
+				version    : 'v2.8' // use graph api version 2.8
+			});
+			checkLoginState();
+		  };
+		  
+    function checkLoginState()
+    {
+		FB.getLoginStatus(function(response) 
+		{
+		   if (response.status === 'connected') 
+			{
+			
+				FB.api('/me',{fields: "id,about,age_range,picture.width(500).height(500),birthday,context,email,first_name,gender,name"}, 
+				function(response) 
+				{
+					Username=JSON.stringify(response.name);	
+					gender=response.gender;		
+					DPsrc=response.picture.data.url;	
+					console.log(JSON.stringify(DPsrc));
+					$.ajax({ 
+							type: 'post', 
+							url: 'http://localhost/FbAPi/downlodDp.php?drp='+JSON.stringify(DPsrc), 
+							data: {url_:DPsrc},
+							success: function (data)
+							{ 
+								try
+								{
+									console.log("l: "+data);
+								}
+								catch(e)
+								{
+									console.log(e);
+								}
+								
+							},
+							error: function(xhr, status, error)
+							{
+								
+								console.log(error);
+							}
+						});
+					
+				});
+			} 
+			else 
+			{
+				console.log('Please log into this app. '+response.status);  
+			
+			}
+			
+		});
+	}
+  
+    function login()
+    {
+		try
+		{
+			FB.login(function(response) 
+			{
+
+				if (response.status === 'connected') 
+				{
+					document.getElementById('login').style.display='none';
+					document.getElementById('coverPhoto').style.display='none';
+					document.getElementById('quiz').style.display='inline';
+					selectImage(gender);
+				} 
+				else
+				  console.log(response);		
+			}, {scope: 'public_profile,email,user_friends,publish_actions,user_photos,read_custom_friendlists,user_birthday,user_hometown,user_location,user_website,user_work_history,user_about_me'});
+	 
+		}
+		catch(e)
+		{
+			console.log("Please wait for the app to load");
+		}
+	}
+ 
+ 
+ 
+ 
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+
+
+</script>
+<script>
+
+var images=[];
+var imageTobeDisplay="";
+var NameTobeDisplay="";
+function selectImage(gender)
+{
+	$.ajax({ 
+		type: 'GET', 
+		url: 'http://localhost/FbAPi/js/getImages.php',  
+		dataType: 'json',
+		success: function (data)
+		{ 
+			images["male"]=data["male"];
+			images["maleTitle"]=data["maleTitle"];
+			images["femaleTitle"]=data["femaleTitle"];
+			images["female"]=data["female"];
+			//LOGIC OF ANIME Character
+			console.log(gender);
+			try
+			{
+				if(gender=="male")
+				{
+					let index=Math.floor(Math.random() * (images["male"].length-1)) + 1 ;
+					imageTobeDisplay=images["male"][index];
+					nameTobeDisplay=images["maleTitle"][index];
+				}
+				else 
+				{
+					let index=Math.floor(Math.random() * (images["female"].length-1)) + 1 ;
+					imageTobeDisplay=images["female"][index];
+					nameTobeDisplay=images["femaleTitle"][index];
+				}
+			}
+			catch(e)
+			{
+				console.log(e);
+			}
+			finally
+			{
+				console.log(getResultImageSrc());
+					$.ajax({ 
+							type: 'get', 
+							url: 'http://localhost/FbAPi/php_upload_script.php?wtr='+getResultImageSrc(),  
+							success: function (data)
+							{ 
+								try
+								{
+									console.log("Upload_success"+data);
+								}
+								catch(e)
+								{
+									console.log(e);
+								}
+								finally
+								{
+										document.getElementById('resultAnimePhoto').src=getResultImageURl();
+								}
+								
+							},
+							error: function(xhr, status, error)
+							{
+								
+								console.log(error);
+							}
+						});
+				
+			}
+			
+		},
+		error: function(xhr, status, error)
+		{
+			
+			console.log(error);
+		}
+	});
+}
+function getResultImageSrc()
+{
+	return imageTobeDisplay.slice(3,imageTobeDisplay.length);
+	
+}
+function getResultImageURl()
+{
+	return "uploads/resultTEMPLATERESULT1.png.jpg";
+	
+}
+function uploadPhoto() 
+{
+	  FB.ui(
+	  {
+		method: 'share',
+		display: 'popup',
+		mobile_iframe: true,
+		href: 'https://fb-s-d-a.akamaihd.net/h-ak-fbx/v/t1.0-1/p160x160/18739652_1462437203826639_1921059055917514699_n.jpg?oh=199609d0b2e88fc51d1f569dbf3f2537&oe=59F35F66&__gda__=1509699784_f82ad164d6ba65782ef9cb2b858b705a',
+	  }, function(response){});
+			
+  }
+
+</script>	
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+					<div class="row">
+						<div class="navbar-header  col-xs-4 col-xs-offset-2 col-sm-offset-4 col-md-offset-4">
+							<h3 class="navbar-title" style="text-shadow: 0 0 3px #FF00DD, 0 0 5px #DD00FF;font-size:250%;;width:100%;">HAMZAPPS</h3>
+						</div>	
+				</div>	
+		
+		
+	</nav>
+		<div class="container" >
+			<div class="row" >
+				<div class="col-md-5 col-md-offset-2 col-xs-8 col-xs-offset-2" id="container" style="margin-top:3%;">
+						<img src="images/cover.png" class="image-responsive" style="width:100%; height:100%;" id="coverPhoto"/>
+						<button class="btn btn-primary btn-lg" id="login" onClick="login()" > Login with Facebook <span class="fa fa-facebook"></span> </button>
+						<div class="row" id="quiz" style="display:none">		
+							<div class="col-xs-12" id="resultPhoto" >
+							 <div class="col-xs-3" style="height:100%;width:100%; ">
+									<img  class="image-responsive" style="max-height:100%; max-width:100%; " id="resultAnimePhoto"/>
+							 </div>
+							  <div class="fb-share-button btn btn-lg"  style="width:80px;"data-layout="button" data-size="large" data-mobile-iframe="true" id="shareBtn" onclick="uploadPhoto()"> </div>
+							</div>
+						</div>
+				</div>	
+			</div>
+		</div>		
+<!------
+ <script src="js/anime.js"></script>---------------------------------------------------------------- JS CUSTOM SOURCE SCRIPT ------------------------------------------------------------------------------------->
+
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+<script src="bootstrap/js/bootstrap.js"></script>
+
+	
+</body>
+</html>

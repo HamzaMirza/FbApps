@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>What will your relation status be on Friday the 13th</title>
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800,300' rel='stylesheet' type='text/css'>
+	<script src="js/html2canvas.js"></script>
+	<style>
+		#container,
+		h3 {
+			font-family: 'Open-sans';
+		}
+
+		#container {
+
+			/*height:79.55%;*/
+			position: absolute;
+			top: 80px;
+			background-color: white;
+			text-align: center;
+		}
+
+		#initialStage {
+			width: 80%;
+		}
+
+		#coverPhoto {
+			height: auto;
+			box-shadow: 1px 1px 8px 2px #A99C0A;
+		}
+
+		#login {
+			position: relative;
+			top: 2px;
+			width: 80%;
+		}
+
+		#shareBtn {
+			margin-top: 10px;
+			width: 80% !important;
+		}
+
+		#resultPhoto {
+			width: 100%;
+			height: 100%;
+		}
+
+		.question {
+			color: #a22a23;
+			font-family: "courier";
+			font-weight: bold;
+			text-shadow: 0px 0px 1px palevioletred;
+		}
+
+		.btn-info {
+			margin-top: 6px;
+			margin-left: 10px;
+			border-radius: 9px;
+			background: white !important;
+			border-color: rgba(0, 0, 0, 0.2) !important;
+			color: black !important;
+		}
+
+		.btn-info:hover {
+			margin-top: 6px;
+			margin-left: 10px;
+			border-radius: 9px;
+			background: rgba(255, 8, 0, 0.4) !important;
+			border-color: rgba(255, 8, 0, 0.4) !important;
+			color: black !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="fb-root"></div>
+
+	<script>
+		function login(){document.getElementById('initialStage').style.display = 'none';
+						document.getElementById('middleStage').style.display = 'inline';}
+		/*var Username, gender;
+		window.fbAsyncInit = function () {
+			FB.init({
+				appId: '576059472784903',
+				xfbml: true,
+				version: 'v2.10'
+			});
+
+			checkLoginState();
+
+		};
+		function checkLoginState() {
+			FB.getLoginStatus(function (response) {
+				if (response.status === 'connected') {
+
+					FB.api('/me', { fields: "id,gender,name" },
+						function (response) {
+							Username = JSON.stringify(response.name);
+							gender = response.gender;
+						});
+				}
+				else {
+					console.log('Please log into this app. ' + response.status);
+
+				}
+
+			});
+		}
+
+		function login() {
+			try {
+				FB.login(function (response) {
+
+					if (response.status === 'connected') {
+						document.getElementById('initialStage').style.display = 'none';
+						document.getElementById('middleStage').style.display = 'inline';
+					}
+					else
+						console.log(response);
+				}, { scope: 'public_profile,email,publish_actions,user_about_me' });
+
+			}
+			catch (e) {
+				console.log("Please wait for the app to load");
+			}
+		}
+			(function (d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/en_US/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+*/
+	</script>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-2 col-xs-8 col-xs-offset-2" id="container" style="margin-top:3%;">
+				<div id="initialStage">
+					<img src="images/cover.png" class="img-responsive" id="coverPhoto" />
+					<button class="btn btn-primary btn-lg" id="login" onClick="login()"> Login with Facebook <span class="fa fa-facebook"></span> </button>
+				</div>
+				<div id="middleStage" style="display:none;" class="col-sm-11">
+					<div class="col-sm-11" style="margin-top:-20px;">
+
+						<h1 class="question h3" id="question"></h1>
+						<button class="btn btn-info btn-lg" id="option1" style="width:100%" onClick="saveScore('1');"></button>
+						<button class="btn btn-info btn-lg" id="option2" style="width:100%" onClick="saveScore('2');"></button>
+						<button class="btn btn-info btn-lg" id="option3" style="width:100%" onClick="saveScore('3');"></button>
+						<button class="btn btn-info btn-lg" id="option4" style="width:100%" onClick="saveScore('4');"></button>
+
+
+					</div>
+
+
+				</div>
+				<div id="FinalStage" style="display:none">
+					<div class="row" id="quiz">
+						<div class="col-xs-12" id="resultPhoto">
+							<div class="col-xs-11" style="height:100%;width:100%; " id="resultHolder">
+								<img class="img-responsive" id="reI" />
+							</div>
+						</div>
+					</div>
+					<button class="btn btn-primary btn-lg" data-layout="button" data-size="large" data-mobile-iframe="true" id="shareBtn" onclick="buttonClicked()"> <span class="fa fa-facebook"></span> Share  </button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<canvas width="1920px" height="800px" style="display:none;" id="canvas" crossorigin="Anonymous"></canvas>
+	<script src="js/quiz.js"></script>
+	<script src="js/html2canvas.js"></script>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+	<script src="bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
